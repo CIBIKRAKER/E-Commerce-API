@@ -1,7 +1,9 @@
-package org.example.ecommerce_api.Model;
+package org.example.ecommerce_api.Model.CartItem;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.example.ecommerce_api.Model.Cart.Cart;
+import org.example.ecommerce_api.Model.Product.Product;
 
 @Entity
 @Table(name = "cart_items", uniqueConstraints = {

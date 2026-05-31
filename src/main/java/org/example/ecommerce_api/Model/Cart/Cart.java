@@ -1,7 +1,9 @@
-package org.example.ecommerce_api.Model;
+package org.example.ecommerce_api.Model.Cart;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.example.ecommerce_api.Model.CartItem.CartItem;
+import org.example.ecommerce_api.Model.User.User;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 

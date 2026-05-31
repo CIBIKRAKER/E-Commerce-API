@@ -1,7 +1,9 @@
-package org.example.ecommerce_api.Model;
+package org.example.ecommerce_api.Model.OrderItem;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.example.ecommerce_api.Model.Order.Order;
+import org.example.ecommerce_api.Model.Product.Product;
 
 import java.math.BigDecimal;
 

@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: ecommerce_db
+    environment:
+      POSTGRES_DB: ecommerceapi
+      POSTGRES_USER: cibikraker
+      POSTGRES_PASSWORD: skaledman31
+    ports:
+      - "5432:5432"

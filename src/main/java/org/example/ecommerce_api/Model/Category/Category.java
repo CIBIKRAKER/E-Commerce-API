@@ -1,7 +1,8 @@
-package org.example.ecommerce_api.Model;
+package org.example.ecommerce_api.Model.Category;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.example.ecommerce_api.Model.Product.Product;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ public class Category {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt =  LocalDateTime.now();
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Product> products = new HashSet<>();
