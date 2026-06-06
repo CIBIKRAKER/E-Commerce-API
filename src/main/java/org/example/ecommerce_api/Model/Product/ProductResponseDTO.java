@@ -14,4 +14,5 @@ public class ProductResponseDTO {
     private Integer stock;
     private String categoryName;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

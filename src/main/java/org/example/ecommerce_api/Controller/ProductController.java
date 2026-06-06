@@ -20,13 +20,13 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> getAll()
+    public ResponseEntity<List<ProductResponseDTO>> getAll()
     {
-        return productService.findAllProducts();
+        return ResponseEntity.ok(productService.findAllProducts());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getById(@PathVariable Long id)
+    public ResponseEntity<ProductResponseDTO> getById(@PathVariable Long id)
     {
         return ResponseEntity.ok(productService.findById(id));
     }

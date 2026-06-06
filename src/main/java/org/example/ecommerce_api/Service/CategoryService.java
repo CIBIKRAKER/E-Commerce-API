@@ -2,6 +2,7 @@ package org.example.ecommerce_api.Service;
 
 import org.example.ecommerce_api.Exception.CategoryNotFoundException;
 import org.example.ecommerce_api.Model.Category.Category;
+import org.example.ecommerce_api.Model.Category.CategoryMapper;
 import org.example.ecommerce_api.Model.Category.CategoryRequestDTO;
 import org.example.ecommerce_api.Model.Category.CategoryResponseDTO;
 import org.example.ecommerce_api.Model.Product.ProductResponseDTO;
@@ -13,47 +14,46 @@ import java.util.List;
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository,  CategoryMapper categoryMapper) {
         this.categoryRepository = categoryRepository;
+        this.categoryMapper = categoryMapper;
     }
 
     public CategoryResponseDTO save(CategoryRequestDTO categoryRequestDTO) {
-        Category category = new Category();
-        category.setName(categoryRequestDTO.getName());
-        category.setDescription(categoryRequestDTO.getDescription());
+        Category category = categoryMapper.toEntity(categoryRequestDTO);
+
         Category saved = categoryRepository.save(category);
 
-        CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO();
-        categoryResponseDTO.setId(saved.getId());
-        categoryResponseDTO.setCategoryName(saved.getName());
-        categoryResponseDTO.setCategoryDescription(saved.getDescription());
-        categoryResponseDTO.setCreatedDate(saved.getCreatedAt());
-        return categoryResponseDTO;
+        return categoryMapper.toCategoryResponseDTO(saved);
     }
 
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
+    public List<CategoryResponseDTO> findAll() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(categoryMapper::toCategoryResponseDTO)
+                .toList();
     }
 
-    public Category findById(Long id) {
+    public CategoryResponseDTO findById(Long id) {
+        Category category = categoryRepository.findById(id).orElseThrow(()-> new CategoryNotFoundException("Category not found!"));
+        return categoryMapper.toCategoryResponseDTO(category);
+    }
+
+    public Category findEntityById(Long id) {
         return categoryRepository.findById(id).orElseThrow(()-> new CategoryNotFoundException("Category not found!"));
     }
 
     public CategoryResponseDTO update(CategoryRequestDTO categoryRequestDTO, Long id) {
-        Category oldCategory = findById(id);
+        Category oldCategory = categoryRepository.findById(id).orElseThrow(()-> new CategoryNotFoundException("Category not found!"));
 
         oldCategory.setName(categoryRequestDTO.getName());
         oldCategory.setDescription(categoryRequestDTO.getDescription());
 
         Category saved = categoryRepository.save(oldCategory);
 
-        CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO();
-        categoryResponseDTO.setId(saved.getId());
-        categoryResponseDTO.setCategoryName(saved.getName());
-        categoryResponseDTO.setCategoryDescription(saved.getDescription());
-        categoryResponseDTO.setCreatedDate(saved.getCreatedAt());
-        return categoryResponseDTO;
+        return categoryMapper.toCategoryResponseDTO(saved);
     }
 
     public void deleteById(Long id) {

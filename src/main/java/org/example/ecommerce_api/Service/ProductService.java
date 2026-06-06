@@ -3,60 +3,53 @@ package org.example.ecommerce_api.Service;
 import org.example.ecommerce_api.Exception.ProductNotFoundException;
 import org.example.ecommerce_api.Model.Category.Category;
 import org.example.ecommerce_api.Model.Product.Product;
+import org.example.ecommerce_api.Model.Product.ProductMapper;
 import org.example.ecommerce_api.Model.Product.ProductRequestDTO;
 import org.example.ecommerce_api.Model.Product.ProductResponseDTO;
 import org.example.ecommerce_api.Repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
+    private final ProductMapper productMapper;
 
-    public ProductService(ProductRepository productRepository, CategoryService categoryService) {
+    public ProductService(ProductRepository productRepository, CategoryService categoryService,  ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.categoryService = categoryService;
+        this.productMapper = productMapper;
     }
 
-    public List<Product> findAllProducts() {
-        return productRepository.findAll();
+    public List<ProductResponseDTO> findAllProducts() {
+        return productRepository.findAll()
+                .stream()
+                .map(productMapper::toProductResponseDTO)
+                .toList();
+    }
+
+    public ProductResponseDTO findById(Long id) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        return productMapper.toProductResponseDTO(product);
     }
 
     public ProductResponseDTO save(ProductRequestDTO productRequestDTO) {
-        Category category =  categoryService.findById(productRequestDTO.getCategoryId());
+        Category category =  categoryService.findEntityById(productRequestDTO.getCategoryId());
 
-        Product product = new Product();
-        product.setName(productRequestDTO.getName());
-        product.setDescription(productRequestDTO.getDescription());
-        product.setPrice(productRequestDTO.getPrice());
-        product.setStock(productRequestDTO.getStock());
+        Product product = productMapper.toEntity(productRequestDTO);
         product.setCategory(category);
-
-        Product savedProduct = productRepository.save(product);
-
-        ProductResponseDTO productResponseDTO = new ProductResponseDTO();
-
-        productResponseDTO.setId(savedProduct.getId());
-        productResponseDTO.setName(savedProduct.getName());
-        productResponseDTO.setDescription(savedProduct.getDescription());
-        productResponseDTO.setPrice(savedProduct.getPrice());
-        productResponseDTO.setStock(savedProduct.getStock());
-        productResponseDTO.setCategoryName(savedProduct.getCategory().getName());
-
-        return productResponseDTO;
+        Product saved = productRepository.save(product);
+        return productMapper.toProductResponseDTO(saved);
     }
 
-    public Product findById(Long id) {
-        return productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found!"));
-    }
 
     public ProductResponseDTO update(ProductRequestDTO productRequestDTO, Long id) {
-        Category category = categoryService.findById(productRequestDTO.getCategoryId());
+        Category category = categoryService.findEntityById(productRequestDTO.getCategoryId());
 
-        Product oldProduct = findById(id);
+        Product oldProduct = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
+
         oldProduct.setName(productRequestDTO.getName());
         oldProduct.setPrice(productRequestDTO.getPrice());
         oldProduct.setStock(productRequestDTO.getStock());
@@ -64,15 +57,8 @@ public class ProductService {
 
         Product saved = productRepository.save(oldProduct);
 
-        ProductResponseDTO productResponseDTO = new ProductResponseDTO();
-        productResponseDTO.setId(saved.getId());
-        productResponseDTO.setName(saved.getName());
-        productResponseDTO.setDescription(saved.getDescription());
-        productResponseDTO.setPrice(saved.getPrice());
-        productResponseDTO.setStock(saved.getStock());
-        productResponseDTO.setCategoryName(saved.getCategory().getName());
-        productResponseDTO.setCreatedAt(saved.getCreatedAt());
-        return productResponseDTO;
+
+        return productMapper.toProductResponseDTO(saved);
     }
 
     public void delete(Long id) {

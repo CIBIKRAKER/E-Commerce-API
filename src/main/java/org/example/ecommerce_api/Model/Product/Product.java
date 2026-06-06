@@ -33,17 +33,17 @@ public class Product {
     @Column(nullable = false)
     private Integer stock;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private Category category;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(nullable = false)
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CartItem> cartItems = new HashSet<>();
