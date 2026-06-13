@@ -20,4 +20,10 @@ public class GlobalExceptionHandler {
     public String handleCategoryNotFoundException(CategoryNotFoundException ex) {
         return ex.getMessage();
     }
+
+    @ExceptionHandler(value = UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleUserNotFoundException(UserNotFoundException ex) {
+        return ex.getMessage();
+    }
 }
