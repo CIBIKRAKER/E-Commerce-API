@@ -1,10 +1,12 @@
 package org.example.ecommerce_api.Service;
 
 import org.example.ecommerce_api.Exception.UserNotFoundException;
+import org.example.ecommerce_api.Model.Cart.Cart;
 import org.example.ecommerce_api.Model.User.User;
 import org.example.ecommerce_api.Model.User.UserMapper;
 import org.example.ecommerce_api.Model.User.UserRequestDTO;
 import org.example.ecommerce_api.Model.User.UserResponseDTO;
+import org.example.ecommerce_api.Repository.CartRepository;
 import org.example.ecommerce_api.Repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +16,12 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final CartRepository cartRepository;
 
-    public UserService(UserRepository userRepository,  UserMapper userMapper) {
+    public UserService(UserRepository userRepository,  UserMapper userMapper, CartRepository cartRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.cartRepository = cartRepository;
     }
 
     public UserResponseDTO save(UserRequestDTO userRequestDTO) {
@@ -25,6 +29,11 @@ public class UserService {
         // TODO: hash password with BCrypt when security is added
         user.setHashedPassword(userRequestDTO.getPassword());
         User saved =  userRepository.save(user);
+
+        Cart cart = new Cart();
+        cart.setUser(user);
+        cartRepository.save(cart);
+
         return userMapper.toUserResponseDTO(saved);
     }
 

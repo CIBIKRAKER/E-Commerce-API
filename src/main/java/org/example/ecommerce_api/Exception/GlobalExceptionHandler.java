@@ -1,5 +1,6 @@
 package org.example.ecommerce_api.Exception;
 
+import org.example.ecommerce_api.Model.Cart.Cart;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,6 +25,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleUserNotFoundException(UserNotFoundException ex) {
+        return ex.getMessage();
+    }
+
+    @ExceptionHandler(value = CartNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleUserNotFoundException(CartNotFoundException ex) {
         return ex.getMessage();
     }
 }

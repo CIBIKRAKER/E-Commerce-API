@@ -35,6 +35,10 @@ public class ProductService {
         return productMapper.toProductResponseDTO(product);
     }
 
+    public Product findEntityById(Long id) {
+        return productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
+    }
+
     public ProductResponseDTO save(ProductRequestDTO productRequestDTO) {
         Category category =  categoryService.findEntityById(productRequestDTO.getCategoryId());
 
